@@ -21,8 +21,9 @@ async function transformDirent(dirent, path) {
 function getStatsFile(dirent, path) {
     return fs.stat(path + dirent.name)
 }
-
+/*
 async function printFileOrFolder(req, res, path) {
+    
     const fileName = req.params.name;
     const regexFolderName = new RegExp ("^[a-zA-Z0-9_\-]+$","gm");
     const isFolder = regexFolderName.test(fileName);
@@ -32,10 +33,20 @@ async function printFileOrFolder(req, res, path) {
         return res.status(200).type('application/json').send(tabFiles);
     } else {
         return res.status(200).type('application/octet-stream').sendFile(path+fileName);
-    }
+    }   
+}
+*/
+
+async function createDirectory(path){
+
+}
+
+
+async function isFolder(path){
+    const statsFile = await fs.stat(path);
+    return statsFile.isDirectory();
 }
 
 
 
-
-export {listFiles, printFileOrFolder}
+export {listFiles, isFolder, createDirectory}
