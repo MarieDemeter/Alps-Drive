@@ -22,10 +22,9 @@ function getStatsFile2(dirent, path) {
     return fs.stat(path + dirent.name)
 }
 
-
 function listDirectory(path) {
     return fs.readdir(path, { withFileTypes: true })
-        .then(dirents => dirents.map(dirent => transformDirent(dirent, path)));
+        .then(dirents => Promise.all(dirents.map(dirent => transformDirent(dirent, path))));
 }
 
 function transformDirent(dirent, path) {
@@ -34,14 +33,17 @@ function transformDirent(dirent, path) {
         isFolder: dirent.isDirectory(),
     }
     if (dirent.isFile()) {
-        file.size = getStatsFile(dirent, path)
-            .then(statsFile=>statsFile.size);
+        return getStatsFile(dirent, path)
+            .then(statsFile=>{
+                file.size = statsFile.size;
+                return file;
+            });
     }
     return file;
 }
 
 function getStatsFile(dirent, path) {
-    return fs.stat(path + dirent.name)
+    return fs.stat(path + dirent.name);
 }
 
 
@@ -76,8 +78,8 @@ async function deleteFileOrDirectory(path, objName){
     }
 }
 
-async function uploadFile(){
-    
+function uploadFile(path, UploadFile){
+    return fs.writeFile(path+UploadFile.name, UploadFile.data)
 }
 
 

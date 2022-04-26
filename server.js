@@ -1,20 +1,21 @@
 //const express = require('express');
 import express from 'express';
-import { listDirectory, isFolder, createDirectory, deleteFileOrDirectory, uploadFile} from './functions.js';
+import { listDirectory, isFolder, createDirectory, deleteFileOrDirectory, uploadFile } from './functions.js';
 import fileUpload from 'express-fileupload';
 import os from 'os';
 
 const app = express();
 const port = 3000;
-const path = "/home/mariedemeter/Bureau/";
-//const path = os.tmpdir();
+//const path = "/home/mariedemeter/Bureau/";
+const path = os.tmpdir() + '/backend/';
 
 
 app.use(express.static('frontend'));
 
 app.use(fileUpload({
-//    useTempFiles : true,
-//    tempFileDir : '/tmp/'
+    //    useTempFiles : true,
+    //    tempFileDir : '/tmp/'
+    headers: 'multipart/form-data'
 }));
 
 app.get('/api/drive/', (req, res) => {
@@ -56,23 +57,20 @@ app.delete('/api/drive/:name', (req, res) => {
 });
 
 app.delete('/api/drive/:folder/:name', (req, res) => {
-    deleteFileOrDirectory(path+req.params.folder+'/', req.params.name)
+    deleteFileOrDirectory(path + req.params.folder + '/', req.params.name)
         .then(objToDelete => res.status(200).send(objToDelete))
         .catch(err => res.status(400).send('Erreur 400 ' + err.message));
 });
 
 app.put('/api/drive/', (req, res) => {
-    console.log(req.files)
-    /*
-    uploadFile(path+req.params.folder+'/', req.params.name)
-        .then(objToDelete => res.status(200).send(objToDelete))
+    uploadFile(path, req.files.file)
+        .then(() => res.sendStatus(200))
         .catch(err => res.status(400).send('Erreur 400 ' + err.message));
-        */
 });
 
 app.put('/api/drive/:folder', (req, res) => {
-    uploadFile(path+req.params.folder+'/', req.params.name)
-        .then(objToDelete => res.status(200).send(objToDelete))
+    uploadFile(path + req.params.folder + '/', req.files.file)
+        .then(() => res.sendStatus(200))
         .catch(err => res.status(400).send('Erreur 400 ' + err.message));
 });
 
