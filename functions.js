@@ -46,10 +46,6 @@ function getStatsFile(dirent, path) {
     return fs.stat(path + dirent.name);
 }
 
-
-
-
-
 async function createDirectory(path, folderName){
 
     const regexFolderName = new RegExp ("^[a-zA-Z]+$","gm");
@@ -79,8 +75,17 @@ async function deleteFileOrDirectory(path, objName){
 }
 
 function uploadFile(path, UploadFile){
+    if(!UploadFile){
+        throw new Error("File was not found")
+    }
     return fs.writeFile(path+UploadFile.name, UploadFile.data)
 }
 
+function uploadFileBusboy(path, UploadFile){
+    if(!UploadFile){
+        throw new Error("File was not found")
+    }
+    return fs.rename(UploadFile.file, path+UploadFile.filename)
+}
 
-export {listDirectory, isFolder, createDirectory, deleteFileOrDirectory, uploadFile}
+export {listDirectory, isFolder, createDirectory, deleteFileOrDirectory, uploadFile, uploadFileBusboy}
